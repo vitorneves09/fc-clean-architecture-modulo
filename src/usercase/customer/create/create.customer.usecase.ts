@@ -12,11 +12,13 @@ export default class CreateCustomerUsecase {
     }
 
     async execute(input: CreateCustomerDto): Promise<CreateCustomerOutput> {
-        const customer = CustomerFactory.createWithAddress(input.name, new Address(
+        const customer = await CustomerFactory.createWithAddress(input.name, new Address(
             input.address.street,
             input.address.number,
             input.address.zip,
             input.address.city));
+        
+            console.log(customer);
 
         await this.customerRepository.create(customer);
 
