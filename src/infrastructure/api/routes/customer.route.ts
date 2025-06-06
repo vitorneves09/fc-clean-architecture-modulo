@@ -37,7 +37,7 @@ customerRoute.get("/", async (req: Request, res: Response) => {
 
         const ListCustomerDto = {};
 
-        const response = usecase.execute(ListCustomerDto);
+        const response = await usecase.execute(ListCustomerDto);
 
         res.send(response);
     } catch (error) {

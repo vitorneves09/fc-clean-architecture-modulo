@@ -34,6 +34,44 @@ describe(" E2E Customer API Tests", () => {
         
     });
 
+    it("should return empty list when no customers exist", async () => {
+        const response = await request(app)
+            .get("/customer");
+
+        expect(response.status).toBe(200);
+        expect(Array.isArray(response.body.customers)).toBe(true);
+        expect(response.body.customers).toHaveLength(0);
+    });
+
+    it("should return list with one customer", async () => {
+        // Arrange: Create a customer first
+        const customerData = {
+            name: "Jane Smith",
+            address: {
+                street: "456 Oak Avenue",
+                city: "Springfield",
+                number: 456,
+                zip: "54321"
+            }
+        };
+
+        await request(app)
+            .post("/customer")
+            .send(customerData);
+
+        // Act: Get the list
+        const response = await request(app)
+            .get("/customer");
+
+        // Assert
+        expect(response.status).toBe(200);
+        expect(Array.isArray(response.body.customers)).toBe(true);
+        expect(response.body.customers).toHaveLength(1);
+        expect(response.body.customers[0].name).toBe("Jane Smith");
+        expect(response.body.customers[0].address.street).toBe("456 Oak Avenue");
+        expect(response.body.customers[0].id).toBeDefined();
+    });
+
 
 
 });
