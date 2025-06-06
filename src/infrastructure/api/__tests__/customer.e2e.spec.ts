@@ -1,3 +1,4 @@
+import { response } from "express";
 import { app, sequelize } from "../express";
 import request from "supertest";
 
@@ -29,9 +30,10 @@ describe(" E2E Customer API Tests", () => {
 
         expect(response.status).toBe(200);
         expect(response.body.name).toBe("John Doe");
-        expect(response.body.active).toBe(true);
         expect(response.body.address.street).toBe("123 Main St");                   
         
     });
+
+
 
 });

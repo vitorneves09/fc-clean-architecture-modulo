@@ -12,12 +12,13 @@ export default class CreateProductUsecase {
     }
 
     async execute(input: InputCreateProductDto): Promise<OutputCreateProductDto> {
-        const product = ProductFactory.create(
+        const product = await ProductFactory.create(
             input.type,
             input.name,
             input.price
         );
 
+        console.log(product);
         await this.productRepository.create(product);
 
         return {

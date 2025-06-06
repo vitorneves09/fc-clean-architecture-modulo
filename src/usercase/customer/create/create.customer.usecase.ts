@@ -17,8 +17,6 @@ export default class CreateCustomerUsecase {
             input.address.number,
             input.address.zip,
             input.address.city));
-        
-            console.log(customer);
 
         await this.customerRepository.create(customer);
 
