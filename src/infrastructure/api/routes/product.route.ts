@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import CreateProductUsecase from '../../../usercase/product/create/create.product.usecase';
 import ProductRepository from '../../product/repository/sequelize/product.repository';
+import ListProductUsecase from '../../../usercase/product/list/list.product.usecase';
 
 export const productRoute = express.Router(); 
 
@@ -20,5 +21,15 @@ productRoute.post("/", async (req: Request, res: Response) => {
         
     } catch (error) {
         console.error("Error creating product" + error);
+    }
+});
+
+productRoute.get("/", async (req: Request, res: Response) => {
+    const usecase = new ListProductUsecase(new ProductRepository());
+    try {
+        const response = await usecase.execute();
+        res.send(response);
+    } catch (error) {
+        console.log("Error list customer", error);
     }
 });

@@ -18,7 +18,6 @@ export default class CreateProductUsecase {
             input.price
         );
 
-        console.log(product);
         await this.productRepository.create(product);
 
         return {
