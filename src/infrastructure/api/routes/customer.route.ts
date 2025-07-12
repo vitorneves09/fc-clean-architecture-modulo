@@ -47,8 +47,6 @@ customerRoute.get("/", async (req: Request, res: Response) => {
 
 });
 
-
-
 customerRoute.put("/:id", async (req: Request, res: Response) => {
     const usecase = new UpdateCustomerUsecase(new CustomerRepository());
 
