@@ -36,4 +36,14 @@ export default class ProductRepository implements ProductRepositoryInterface {
       new Product(productModel.id, productModel.name, productModel.price)
     );
   }
+
+  async delete(id: string): Promise<void> {
+
+    const product = await this.find(id);
+
+    if (!product) {
+      throw new Error("Product not found");
+    }
+    await ProductModel.destroy({ where: { id } });
+  }
 }

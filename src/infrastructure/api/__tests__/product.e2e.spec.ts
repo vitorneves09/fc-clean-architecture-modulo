@@ -65,6 +65,57 @@ describe(" E2E Customer API Tests", () => {
         expect(response.body.products[0].name).toBe(productData.name);
     });
 
+    it("Should get a product by id", async () => {
+        const productData = {
+            name: "Product 3",
+            price: 300,
+            type: "a"
+        };
+
+        const createResponse = await request(app)
+            .post("/product")
+            .send(productData);
+
+        const productId = createResponse.body.id;
+
+        const response = await request(app)
+            .get(`/product/${productId}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.id).toBe(productId);
+        expect(response.body.name).toBe(productData.name);
+        expect(response.body.price).toBe(productData.price);
+    });
+
+    it("Should return 404 when getting a non-existent product", async () => {
+        const response = await request(app)
+            .get("/product/invalid-id-123");
+
+        expect(response.status).toBe(404);
+    });
+
+    it("Should delete a product", async () => {
+        const productData = {
+            name: "Product 4",
+            price: 400,
+            type: "a"
+        };
+
+        const createResponse = await request(app)
+            .post("/product")
+            .send(productData);
+
+        const productId = createResponse.body.id;
+
+        const deleteResponse = await request(app)
+            .delete(`/product/${productId}`);
+
+        expect(deleteResponse.status).toBe(204);
+
+        const getResponse = await request(app)
+            .get(`/product/${productId}`);
+        expect(getResponse.status).toBe(404);
+    });
 
     it("Should update a product", async () => {
 
@@ -90,6 +141,46 @@ describe(" E2E Customer API Tests", () => {
         expect(response.status).toBe(200);
         expect(response.body.name).toBe(productData.name);
         expect(response.body.price).toBe(250);
+    });
+
+    it("should create a product B", async () => {
+        const input = {
+            name: "Product B1",
+            price: 150,
+            type: "b"
+        };
+
+        const response = await request(app)
+            .post("/product")
+            .send(input);
+
+        expect(response.status).toBe(200);
+        expect(response.body.name).toBe(input.name);
+        expect(response.body.price).toBe(input.price * 2); // Produto B dobra o preço
+    });
+
+    it("Should update a product B", async () => {
+        const productData = {
+            name: "Product B2",
+            price: 300,
+            type: "b"
+        };
+
+        const createResponse = await request(app)
+            .post("/product")
+            .send(productData);
+
+        const response = await request(app)
+            .put("/product/" + createResponse.body.id)
+            .send({
+                id: createResponse.body.id,
+                name: "Product B2 Updated",
+                price: 350,
+            });
+
+        expect(response.status).toBe(200);
+        expect(response.body.name).toBe("Product B2 Updated");
+        expect(response.body.price).toBe(350); // Produto B dobra o preço
     });
 
 });

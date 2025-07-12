@@ -81,4 +81,13 @@ export default class CustomerRepository implements CustomerRepositoryInterface {
 
     return customers;
   }
+
+  async delete(id: string): Promise<void> {
+    const customer = await this.find(id);
+
+    if (!customer) {
+      throw new Error("Customer not found");
+    }
+    await CustomerModel.destroy({ where: { id } });
+  }
 }

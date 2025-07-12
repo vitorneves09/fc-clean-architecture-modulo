@@ -3,6 +3,8 @@ import CreateProductUsecase from '../../../usercase/product/create/create.produc
 import ProductRepository from '../../product/repository/sequelize/product.repository';
 import ListProductUsecase from '../../../usercase/product/list/list.product.usecase';
 import UpdateProductUsecase from '../../../usercase/product/update/update.product.usecase';
+import FindProductUsecase from '../../../usercase/product/find/find.product.usecase';
+import DeleteProductUsecase from '../../../usercase/product/delete/delete.product.usecase';
 
 export const productRoute = express.Router(); 
 
@@ -51,4 +53,24 @@ productRoute.put("/:id", async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Error updating product", error);
     }
-});     
+});
+
+productRoute.get("/:id", async (req: Request, res: Response) => {
+    const usecase = new FindProductUsecase(new ProductRepository());
+    try {
+        const response = await usecase.execute({ id: req.params.id });
+        res.send(response);
+    } catch (error) {
+        res.status(404).send({ error: "Product not found" });
+    }
+});
+
+productRoute.delete("/:id", async (req: Request, res: Response) => {
+    const usecase = new DeleteProductUsecase(new ProductRepository());
+    try {
+        await usecase.execute({ id: req.params.id });
+        res.status(204).send();
+    } catch (error) {
+        res.status(404).send({ error: "Product not found" });
+    }
+});

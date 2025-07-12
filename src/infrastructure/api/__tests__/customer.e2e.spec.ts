@@ -72,6 +72,73 @@ describe(" E2E Customer API Tests", () => {
         expect(response.body.customers[0].id).toBeDefined();
     });
 
+    it("should get a customer by id", async () => {
+        // Arrange: cria um cliente
+        const customerData = {
+            name: "Carlos Silva",
+            address: {
+                street: "Rua das Flores",
+                city: "Belo Horizonte",
+                number: 789,
+                zip: "30123-456"
+            }
+        };
+
+        const createResponse = await request(app)
+            .post("/customer")
+            .send(customerData);
+
+        const customerId = createResponse.body.id;
+
+        // Act: busca o cliente pelo id
+        const response = await request(app)
+            .get(`/customer/${customerId}`);
+
+        // Assert
+        expect(response.status).toBe(200);
+        expect(response.body.id).toBe(customerId);
+        expect(response.body.name).toBe("Carlos Silva");
+        expect(response.body.address.street).toBe("Rua das Flores");
+    });
+
+    it("should return 404 when getting a non-existent customer", async () => {
+        const response = await request(app)
+            .get("/customer/invalid-id-123");
+
+        expect(response.status).toBe(404);
+    });
+
+    it("should delete a customer", async () => {
+        // Arrange: cria um cliente
+        const customerData = {
+            name: "Maria Oliveira",
+            address: {
+                street: "Av. Brasil",
+                city: "Rio de Janeiro",
+                number: 321,
+                zip: "20000-000"
+            }
+        };
+
+        const createResponse = await request(app)
+            .post("/customer")
+            .send(customerData);
+
+        const customerId = createResponse.body.id;
+
+        // Act: deleta o cliente
+        const deleteResponse = await request(app)
+            .delete(`/customer/${customerId}`);
+
+        // Assert
+        expect(deleteResponse.status).toBe(204);
+
+        // Verifica se realmente foi deletado
+        const getResponse = await request(app)
+            .get(`/customer/${customerId}`);
+        expect(getResponse.status).toBe(404);
+    });
+
     it("Should update a product", async () => {
 
         const customerDate = {

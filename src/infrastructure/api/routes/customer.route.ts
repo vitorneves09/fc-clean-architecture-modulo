@@ -3,6 +3,8 @@ import CreateCustomerUsecase from '../../../usercase/customer/create/create.cust
 import CustomerRepository from '../../customer/repository/sequelize/customer.repository';
 import ListCustomerUseCase from '../../../usercase/customer/list/list.customer.usecase';
 import UpdateCustomerUsecase from '../../../usercase/customer/update/update.customer.usecase';
+import FindCustomerUsecase from '../../../usercase/customer/find/find.customer.usecase';
+import DeleteCustomerUsecase from '../../../usercase/customer/delete/delete.customer.usecase';
 
 
 export const customerRoute = express.Router(); 
@@ -67,4 +69,24 @@ customerRoute.put("/:id", async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Error updating product", error);
     }
-});     
+});
+
+customerRoute.get("/:id", async (req: Request, res: Response) => {
+    const usecase = new FindCustomerUsecase(new CustomerRepository());
+    try {
+        const response = await usecase.execute({ id: req.params.id });
+        res.send(response);
+    } catch (error) {
+        res.status(404).send({ error: "Customer not found" });
+    }
+});
+
+customerRoute.delete("/:id", async (req: Request, res: Response) => {
+    const usecase = new DeleteCustomerUsecase(new CustomerRepository());
+    try {
+        await usecase.execute({ id: req.params.id });
+        res.status(204).send();
+    } catch (error) {
+        res.status(404).send({ error: "Customer not found" });
+    }
+});
