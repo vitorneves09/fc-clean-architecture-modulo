@@ -72,6 +72,40 @@ describe(" E2E Customer API Tests", () => {
         expect(response.body.customers[0].id).toBeDefined();
     });
 
+    it("Should update a product", async () => {
 
+        const customerDate = {
+            name: "Customer 1",
+            address: {
+                street: "123 Main St",
+                city: "Anytown",
+                number: 123,
+                zip: "12345"
+            }
+        };
+
+        const resposne = await request(app)
+            .post("/customer")
+            .send(customerDate);
+
+
+        const newCustomerData = {
+            id: resposne.body.id,
+            name: "Customer 11",
+            address: {
+                street: "123 Main St",
+                city: "Anytown",
+                number: 123,
+                zip: "12345"
+            }
+        }
+
+        const response = await request(app)
+            .put("/customer/" + resposne.body.id)
+            .send(newCustomerData);
+
+        expect(response.status).toBe(200);
+        expect(response.body.name).toBe(newCustomerData.name);
+    });
 
 });
