@@ -1,6 +1,7 @@
 import { response } from "express";
 import { app, sequelize } from "../express";
 import request from "supertest";
+import Address from "../../../domain/customer/value-object/address";
 
 describe(" E2E Customer API Tests", () => {
 
@@ -42,7 +43,7 @@ describe(" E2E Customer API Tests", () => {
 
 
     it("Should return list with one product", async () => {
-        // Arrange: Create a product first
+
         const productData = {
             name: "Product 2",
             price: 200,
@@ -53,15 +54,42 @@ describe(" E2E Customer API Tests", () => {
             .post("/product")
             .send(productData);
 
-        // Act: Get the list of products
+
         const response = await request(app)
             .get("/product");
 
-        // Assert: Check if the product is in the list
+
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body.products)).toBe(true);
         expect(response.body.products).toHaveLength(1);
         expect(response.body.products[0].name).toBe(productData.name);
+    });
+
+
+    it("Should update a product", async () => {
+
+        const productData = {
+            name: "Product 2",
+            price: 200,
+            type: "a"
+        };
+
+        const resposne = await request(app)
+            .post("/product")
+            .send(productData);
+
+
+        const response = await request(app)
+            .put("/product/" + resposne.body.id)
+            .send({
+                id: resposne.body.id,
+                name: "Product 2",
+                price: 250,
+            });
+
+        expect(response.status).toBe(200);
+        expect(response.body.name).toBe(productData.name);
+        expect(response.body.price).toBe(250);
     });
 
 });
