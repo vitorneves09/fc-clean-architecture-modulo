@@ -22,6 +22,7 @@ const MockRepository =  ()=>{
             new Product(inputProduct1.id, inputProduct1.name, inputProduct1.price),
             new Product(inputProduct2.id, inputProduct2.name, inputProduct2.price)
         ])),
+        delete: jest.fn(),
 }}
 
 describe("List product unit test", () => {
